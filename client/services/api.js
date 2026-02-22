@@ -8,27 +8,32 @@ async function request(endpoint, options = {}) {
         ...options,
     });
     const data = await res.json().catch(() => ({}));
-    if (!res.ok) throw new Error(data.error || data.message || `Request failed (${res.status})`);
+    if (!res.ok) throw new Error(data.error || 'Request could not be processed');
     return data;
 }
 
-// AI endpoints (through Netlify Functions or local Express)
+// Compliance scan
 export async function runComplianceScan(payload) {
-    return request(import.meta.env.DEV ? '/scan' : '/scan', {
-        method: 'POST',
-        body: JSON.stringify(payload),
-    });
+    return request('/scan', { method: 'POST', body: JSON.stringify(payload) });
 }
 
+// Document generation
 export async function generateDocument(payload) {
-    return request(import.meta.env.DEV ? '/docs/generate' : '/generate', {
-        method: 'POST',
-        body: JSON.stringify(payload),
-    });
+    return request(import.meta.env.DEV ? '/docs/generate' : '/generate', { method: 'POST', body: JSON.stringify(payload) });
 }
 
-// Health check — only used in dev mode
+// AI Risk Assessment
+export async function runAIRiskAssessment(payload) {
+    return request('/ai-risk', { method: 'POST', body: JSON.stringify(payload) });
+}
+
+// Data Classification
+export async function classifyData(payload) {
+    return request('/classify', { method: 'POST', body: JSON.stringify(payload) });
+}
+
+// Health check
 export async function checkHealth() {
-    if (!import.meta.env.DEV) return { status: 'ok', ollama: 'connected' };
+    if (!import.meta.env.DEV) return { status: 'ok' };
     return request('/health');
 }

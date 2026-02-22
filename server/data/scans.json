@@ -100,5 +100,39 @@
         "response_time_seconds": 11
       }
     }
+  },
+  {
+    "id": "c0b6eada-def8-49e1-8898-e1d362a58be8",
+    "timestamp": "2026-02-22T11:05:08.174Z",
+    "company": {
+      "name": "helo corp",
+      "industry": "Technology",
+      "size": "11-50",
+      "country": "United Kingdom"
+    },
+    "regulation": "HIPAA",
+    "overall_risk": "MEDIUM",
+    "summary": "The data collection process involves AWS Mumbai, potentially exposing sensitive patient information.  Lack of specific controls for data sharing with analytics raises compliance concerns.",
+    "findings_count": 1,
+    "result": {
+      "regulation": "HIPAA",
+      "overall_risk": "MEDIUM",
+      "summary": "The data collection process involves AWS Mumbai, potentially exposing sensitive patient information.  Lack of specific controls for data sharing with analytics raises compliance concerns.",
+      "findings": [
+        {
+          "requirement": "name",
+          "status": "NON_COMPLIANT",
+          "confidence": 70,
+          "risk_level": "MEDIUM",
+          "business_impact": "plain language",
+          "recommended_action": "Implement data anonymization or pseudonymization techniques before sharing with analytics."
+        }
+      ],
+      "_meta": {
+        "analyzed_at": "2026-02-22T11:05:08.166Z",
+        "model": "gemma3:1b",
+        "response_time_seconds": 12.6
+      }
+    }
   }
 ]

@@ -2,6 +2,9 @@ import { renderDashboard } from './pages/dashboard.js';
 import { renderScanner } from './pages/scanner.js';
 import { renderGenerator } from './pages/generator.js';
 import { renderHistory } from './pages/history.js';
+import { renderAIRisk } from './pages/ai-risk.js';
+import { renderClassifier } from './pages/classifier.js';
+import { renderComparison } from './pages/comparison.js';
 import { renderAuth } from './pages/auth.js';
 import { getUser, onAuthChange, signOut } from './services/supabase.js';
 
@@ -15,6 +18,9 @@ const routes = {
     '/scanner': { render: renderScanner, label: 'Scanner' },
     '/generator': { render: renderGenerator, label: 'Documents' },
     '/history': { render: renderHistory, label: 'History' },
+    '/ai-risk': { render: renderAIRisk, label: 'AI Risk' },
+    '/classifier': { render: renderClassifier, label: 'Classifier' },
+    '/comparison': { render: renderComparison, label: 'Compare' },
 };
 
 function navigate() {
