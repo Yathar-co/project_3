@@ -1,7 +1,8 @@
 import { getScans } from '../services/supabase.js';
+import { esc } from '../services/security.js';
 
 export function renderDashboard(container, user) {
-  const name = user?.user_metadata?.full_name || user?.email?.split('@')[0] || 'there';
+  const name = esc(user?.user_metadata?.full_name || user?.email?.split('@')[0] || 'there');
   container.innerHTML = `
     <div class="page-header animate-in">
       <h1>Welcome back, ${name}</h1>
@@ -72,9 +73,9 @@ async function loadData(user) {
       const c = s.overall_risk === 'HIGH' ? 'red' : s.overall_risk === 'MEDIUM' ? 'amber' : 'green';
       const d = new Date(s.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
       return `<div style="display:flex;align-items:center;justify-content:space-between;padding:var(--sp-2) 0;border-bottom:1px solid var(--border-1);">
-        <div><div style="font-size:var(--font-sm);font-weight:500;">${s.company_name}</div>
-        <div style="font-size:var(--font-xs);color:var(--text-4);">${s.regulation} · ${d}</div></div>
-        <span class="badge badge-${c}">${s.overall_risk}</span></div>`;
+        <div><div style="font-size:var(--font-sm);font-weight:500;">${esc(s.company_name)}</div>
+        <div style="font-size:var(--font-xs);color:var(--text-4);">${esc(s.regulation)} · ${d}</div></div>
+        <span class="badge badge-${c}">${esc(s.overall_risk)}</span></div>`;
     }).join('');
   } catch { }
 }
