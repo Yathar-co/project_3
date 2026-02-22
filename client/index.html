@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SHIELD — Compliance Intelligence</title>
+  <meta name="description"
+    content="AI-powered compliance readiness platform. Detect regulatory gaps, prioritize risks, generate policy documents." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Outfit:wght@300;400;500;600;700;800;900&family=Press+Start+2P&display=swap"
+    rel="stylesheet" />
+  <link rel="stylesheet" href="/style.css" />
+</head>
+
+<body>
+  <!-- CRT Scanline Overlay -->
+  <div class="crt-overlay"></div>
+
+  <div id="app">
+    <!-- Sidebar Navigation -->
+    <nav id="sidebar" class="sidebar">
+      <div class="sidebar-brand">
+        <div class="brand-icon">
+          <span class="brand-glyph">◆</span>
+        </div>
+        <div class="brand-text-group">
+          <span class="brand-text">SHIELD</span>
+          <span class="brand-sub">COMPLIANCE v2.0</span>
+        </div>
+      </div>
+
+      <ul class="nav-links">
+        <li>
+          <a href="#/" class="nav-link active" data-page="dashboard">
+            <span class="nav-icon">◫</span>
+            <span>DASHBOARD</span>
+          </a>
+        </li>
+        <li>
+          <a href="#/scanner" class="nav-link" data-page="scanner">
+            <span class="nav-icon">⧫</span>
+            <span>SCANNER</span>
+          </a>
+        </li>
+        <li>
+          <a href="#/generator" class="nav-link" data-page="generator">
+            <span class="nav-icon">▤</span>
+            <span>DOC GEN</span>
+          </a>
+        </li>
+        <li>
+          <a href="#/history" class="nav-link" data-page="history">
+            <span class="nav-icon">◷</span>
+            <span>HISTORY</span>
+          </a>
+        </li>
+      </ul>
+
+      <div class="sidebar-footer">
+        <div class="status-indicator" id="ollamaStatus">
+          <div class="status-dot"></div>
+          <span>SYS CHECK...</span>
+        </div>
+        <div class="terminal-line">
+          <span class="blink-cursor">█</span>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main id="main-content" class="main-content">
+      <div class="topbar">
+        <div class="topbar-left">
+          <span class="topbar-breadcrumb" id="page-breadcrumb">SYS://DASHBOARD</span>
+        </div>
+        <div class="topbar-right">
+          <div class="topbar-clock" id="topbar-clock"></div>
+        </div>
+      </div>
+      <div id="page-container" class="page-container"></div>
+    </main>
+  </div>
+
+  <script type="module" src="/main.js"></script>
+</body>
+
+</html>

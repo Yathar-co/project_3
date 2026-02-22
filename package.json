@@ -1,0 +1,15 @@
+{
+    "name": "shield",
+    "version": "1.0.0",
+    "description": "Shield — B2B Compliance Intelligence Platform",
+    "private": true,
+    "scripts": {
+        "dev": "concurrently \"cd server && node server.js\" \"cd client && npx vite\"",
+        "build": "cd client && npm run build",
+        "start": "cd server && NODE_ENV=production node server.js",
+        "setup": "cd server && npm install && cd ../client && npm install"
+    },
+    "devDependencies": {
+        "concurrently": "^8.2.2"
+    }
+}

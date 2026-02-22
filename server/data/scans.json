@@ -1,0 +1,104 @@
+[
+  {
+    "id": "e2685be9-75b8-4e89-8849-78ef8125003c",
+    "timestamp": "2026-02-22T09:44:53.428Z",
+    "company": {
+      "name": "TestCo",
+      "industry": "Fintech",
+      "size": "50",
+      "country": "India"
+    },
+    "regulation": "GDPR",
+    "overall_risk": "LOW",
+    "summary": "TestCo collects name and email, which are stored on AWS, potentially exposing data to analytics.",
+    "findings_count": 1,
+    "result": {
+      "regulation": "GDPR",
+      "overall_risk": "LOW",
+      "summary": "TestCo collects name and email, which are stored on AWS, potentially exposing data to analytics.",
+      "findings": [
+        {
+          "requirement": "name",
+          "status": "COMPLIANT",
+          "confidence": 95,
+          "risk_level": "LOW",
+          "business_impact": "minimal",
+          "recommended_action": "Implement strong data masking for sensitive fields like name and email."
+        }
+      ],
+      "_meta": {
+        "analyzed_at": "2026-02-22T09:44:53.423Z",
+        "model": "gemma3:1b",
+        "response_time_seconds": 10.3
+      }
+    }
+  },
+  {
+    "id": "56ae0983-a925-44df-82ac-10bd6400c0a8",
+    "timestamp": "2026-02-22T09:45:29.015Z",
+    "company": {
+      "name": "TestCo",
+      "industry": "Fintech",
+      "size": "50",
+      "country": "India"
+    },
+    "regulation": "GDPR",
+    "overall_risk": "LOW",
+    "summary": "TestCo collects name and email, which are stored on AWS, potentially exposing data to analytics.",
+    "findings_count": 1,
+    "result": {
+      "regulation": "GDPR",
+      "overall_risk": "LOW",
+      "summary": "TestCo collects name and email, which are stored on AWS, potentially exposing data to analytics.",
+      "findings": [
+        {
+          "requirement": "name",
+          "status": "COMPLIANT",
+          "confidence": 95,
+          "risk_level": "LOW",
+          "business_impact": "minimal",
+          "recommended_action": "Implement strong data masking for sensitive fields like name and email during storage and processing."
+        }
+      ],
+      "_meta": {
+        "analyzed_at": "2026-02-22T09:45:29.013Z",
+        "model": "gemma3:1b",
+        "response_time_seconds": 8.5
+      }
+    }
+  },
+  {
+    "id": "9efa0e53-3844-49a6-8401-5336e978589a",
+    "timestamp": "2026-02-22T09:47:22.000Z",
+    "company": {
+      "name": "z",
+      "industry": "Fintech",
+      "size": "501-1000",
+      "country": "United States"
+    },
+    "regulation": "CCPA (California Consumer Privacy Act)",
+    "overall_risk": "MEDIUM",
+    "summary": "The collection of name and phone data via AWS Chennai raises concerns regarding data sharing with payment, potentially triggering CCPA requirements for data minimization and consent.",
+    "findings_count": 1,
+    "result": {
+      "regulation": "CCPA (California Consumer Privacy Act)",
+      "overall_risk": "MEDIUM",
+      "summary": "The collection of name and phone data via AWS Chennai raises concerns regarding data sharing with payment, potentially triggering CCPA requirements for data minimization and consent.",
+      "findings": [
+        {
+          "requirement": "name",
+          "status": "NON_COMPLIANT",
+          "confidence": 70,
+          "risk_level": "MEDIUM",
+          "business_impact": "plain language",
+          "recommended_action": "Implement a clear consent mechanism for name collection and limit data retention to necessary periods."
+        }
+      ],
+      "_meta": {
+        "analyzed_at": "2026-02-22T09:47:22.000Z",
+        "model": "gemma3:1b",
+        "response_time_seconds": 11
+      }
+    }
+  }
+]
