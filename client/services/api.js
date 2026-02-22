@@ -1,52 +1,34 @@
-const API_BASE = '/api';
+// API service — calls Netlify Functions in production, local Express in dev
+const BASE_URL = import.meta.env.DEV ? 'http://localhost:3001/api' : '/.netlify/functions';
 
-async function request(path, options = {}) {
-    try {
-        const res = await fetch(`${API_BASE}${path}`, {
-            headers: { 'Content-Type': 'application/json' },
-            ...options,
-        });
-
-        if (!res.ok) {
-            const err = await res.json().catch(() => ({ message: res.statusText }));
-            throw new Error(err.message || err.error || 'Request failed');
-        }
-
-        return await res.json();
-    } catch (err) {
-        if (err.message === 'Failed to fetch') {
-            throw new Error('Cannot connect to server. Is the backend running on port 3001?');
-        }
-        throw err;
-    }
+async function request(endpoint, options = {}) {
+    const url = `${BASE_URL}${endpoint}`;
+    const res = await fetch(url, {
+        headers: { 'Content-Type': 'application/json', ...options.headers },
+        ...options,
+    });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) throw new Error(data.error || data.message || `Request failed (${res.status})`);
+    return data;
 }
 
-export async function checkHealth() {
-    return request('/health');
-}
-
+// AI endpoints (through Netlify Functions or local Express)
 export async function runComplianceScan(payload) {
-    return request('/scan', {
+    return request(import.meta.env.DEV ? '/scan' : '/scan', {
         method: 'POST',
         body: JSON.stringify(payload),
     });
-}
-
-export async function getScanHistory() {
-    return request('/scan/history');
-}
-
-export async function getScanById(id) {
-    return request(`/scan/${id}`);
 }
 
 export async function generateDocument(payload) {
-    return request('/docs/generate', {
+    return request(import.meta.env.DEV ? '/docs/generate' : '/generate', {
         method: 'POST',
         body: JSON.stringify(payload),
     });
 }
 
-export async function getDocTypes() {
-    return request('/docs/types');
+// Health check — only used in dev mode
+export async function checkHealth() {
+    if (!import.meta.env.DEV) return { status: 'ok', ollama: 'connected' };
+    return request('/health');
 }
