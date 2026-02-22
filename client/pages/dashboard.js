@@ -1,92 +1,80 @@
 import { getScans } from '../services/supabase.js';
 
 export function renderDashboard(container, user) {
+  const name = user?.user_metadata?.full_name || user?.email?.split('@')[0] || 'there';
   container.innerHTML = `
     <div class="page-header animate-in">
-      <h1>Command Center</h1>
-      <p>> welcome back, ${user?.user_metadata?.full_name || user?.email?.split('@')[0] || 'agent'}</p>
+      <h1>Welcome back, ${name}</h1>
+      <p>Here's your compliance overview</p>
     </div>
 
     <div class="stats-grid">
-      <div class="stat-card mint animate-in">
-        <div class="stat-icon">⧫</div>
+      <div class="stat-card default animate-in">
         <div class="stat-value" id="sv-scans">—</div>
-        <div class="stat-label">Total Scans</div>
+        <div class="stat-label">Total scans</div>
       </div>
       <div class="stat-card green animate-in">
-        <div class="stat-icon">✓</div>
-        <div class="stat-value" id="sv-compliant">—</div>
-        <div class="stat-label">Low Risk</div>
+        <div class="stat-value" id="sv-low">—</div>
+        <div class="stat-label">Low risk</div>
       </div>
       <div class="stat-card amber animate-in">
-        <div class="stat-icon">△</div>
-        <div class="stat-value" id="sv-partial">—</div>
-        <div class="stat-label">Medium Risk</div>
+        <div class="stat-value" id="sv-med">—</div>
+        <div class="stat-label">Medium risk</div>
       </div>
       <div class="stat-card red animate-in">
-        <div class="stat-icon">✕</div>
-        <div class="stat-value" id="sv-noncompliant">—</div>
-        <div class="stat-label">High Risk</div>
+        <div class="stat-value" id="sv-high">—</div>
+        <div class="stat-label">High risk</div>
       </div>
     </div>
 
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:var(--sp-4);">
       <div class="card animate-in">
-        <div class="card-header"><h2 class="card-title">Quick Actions</h2></div>
-        <div style="display:flex;flex-direction:column;gap:var(--sp-3);">
-          <a href="#/scanner" class="btn btn-primary btn-lg" style="width:100%;">⧫ Run Compliance Scan</a>
-          <a href="#/generator" class="btn btn-secondary btn-lg" style="width:100%;">▤ Generate Policy Doc</a>
+        <div class="card-header"><h2 class="card-title">Quick actions</h2></div>
+        <div style="display:flex;flex-direction:column;gap:var(--sp-2);">
+          <a href="#/scanner" class="btn btn-primary" style="width:100%;">Run compliance scan</a>
+          <a href="#/generator" class="btn btn-secondary" style="width:100%;">Generate document</a>
         </div>
       </div>
-      <div class="card animate-in" id="recent-scans-card">
-        <div class="card-header"><h2 class="card-title">Recent Scans</h2><a href="#/history" class="btn btn-ghost">VIEW ALL →</a></div>
-        <div id="recent-scans-list">
-          <div class="loading-container" style="padding:var(--sp-3);"><div class="spinner" style="width:20px;height:20px;"></div></div>
+      <div class="card animate-in">
+        <div class="card-header"><h2 class="card-title">Recent scans</h2><a href="#/history" class="btn btn-ghost">View all →</a></div>
+        <div id="recent-list">
+          <div class="loading-container" style="padding:var(--sp-3);"><div class="spinner" style="width:18px;height:18px;"></div></div>
         </div>
       </div>
     </div>
 
     <div class="card animate-in" style="margin-top:var(--sp-4);">
-      <div class="card-header"><h2 class="card-title">Supported Frameworks</h2></div>
+      <div class="card-header"><h2 class="card-title">Supported frameworks</h2></div>
       <div style="display:flex;flex-wrap:wrap;gap:var(--sp-2);">
-        ${['GDPR', 'DPDP Act', 'CCPA', 'HIPAA', 'SOC 2', 'PCI DSS', 'ISO 27001', 'PIPEDA', 'LGPD'].map(r => `<span class="badge badge-mint">${r}</span>`).join('')}
+        ${['GDPR', 'DPDP Act', 'CCPA', 'HIPAA', 'SOC 2', 'PCI DSS', 'ISO 27001', 'PIPEDA', 'LGPD'].map(r => `<span class="badge badge-default">${r}</span>`).join('')}
       </div>
-      <p style="margin-top:var(--sp-3);font-family:var(--font-mono);font-size:9px;color:var(--text-tertiary);">[!] Shield assists with compliance readiness only. Not legal advice.</p>
     </div>
   `;
-
-  loadDashboardData(user);
+  loadData(user);
 }
 
-async function loadDashboardData(user) {
+async function loadData(user) {
   try {
     const scans = await getScans(user.id);
-    const total = scans.length;
     let low = 0, med = 0, high = 0;
-    scans.forEach(s => {
-      if (s.overall_risk === 'LOW') low++;
-      else if (s.overall_risk === 'MEDIUM') med++;
-      else high++;
-    });
+    scans.forEach(s => { if (s.overall_risk === 'LOW') low++; else if (s.overall_risk === 'MEDIUM') med++; else high++; });
 
-    document.getElementById('sv-scans').textContent = total;
-    document.getElementById('sv-compliant').textContent = low;
-    document.getElementById('sv-partial').textContent = med;
-    document.getElementById('sv-noncompliant').textContent = high;
+    document.getElementById('sv-scans').textContent = scans.length;
+    document.getElementById('sv-low').textContent = low;
+    document.getElementById('sv-med').textContent = med;
+    document.getElementById('sv-high').textContent = high;
 
-    const listEl = document.getElementById('recent-scans-list');
+    const list = document.getElementById('recent-list');
     const recent = scans.slice(0, 5);
-    if (recent.length === 0) {
-      listEl.innerHTML = '<div class="empty-state" style="padding:var(--sp-3);"><p>> no scan records yet</p></div>';
-      return;
-    }
-    listEl.innerHTML = recent.map(s => {
-      const rc = s.overall_risk === 'HIGH' ? 'red' : s.overall_risk === 'MEDIUM' ? 'amber' : 'green';
-      const date = new Date(s.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
-      return `<div style="display:flex;align-items:center;justify-content:space-between;padding:var(--sp-2) 0;border-bottom:1px solid var(--border-dim);">
-        <div><div style="font-family:var(--font-mono);font-weight:700;font-size:var(--font-sm);">${s.company_name}</div>
-        <div style="font-family:var(--font-mono);font-size:9px;color:var(--text-tertiary);">${s.regulation} · ${date}</div></div>
-        <span class="badge badge-${rc}">${s.overall_risk}</span></div>`;
+    if (!recent.length) { list.innerHTML = '<div class="empty-state" style="padding:var(--sp-3);"><p>No scans yet</p></div>'; return; }
+
+    list.innerHTML = recent.map(s => {
+      const c = s.overall_risk === 'HIGH' ? 'red' : s.overall_risk === 'MEDIUM' ? 'amber' : 'green';
+      const d = new Date(s.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+      return `<div style="display:flex;align-items:center;justify-content:space-between;padding:var(--sp-2) 0;border-bottom:1px solid var(--border-1);">
+        <div><div style="font-size:var(--font-sm);font-weight:500;">${s.company_name}</div>
+        <div style="font-size:var(--font-xs);color:var(--text-4);">${s.regulation} · ${d}</div></div>
+        <span class="badge badge-${c}">${s.overall_risk}</span></div>`;
     }).join('');
-  } catch { /* silent */ }
+  } catch { }
 }

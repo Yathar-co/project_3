@@ -6,23 +6,22 @@ import { renderAuth } from './pages/auth.js';
 import { getUser, onAuthChange, signOut } from './services/supabase.js';
 
 const container = document.getElementById('page-container');
-const breadcrumb = document.getElementById('page-breadcrumb');
 const sidebar = document.getElementById('sidebar');
 
 let currentUser = null;
 
 const routes = {
-    '/': { render: renderDashboard, label: 'SYS://DASHBOARD' },
-    '/scanner': { render: renderScanner, label: 'SYS://SCANNER' },
-    '/generator': { render: renderGenerator, label: 'SYS://DOC_GEN' },
-    '/history': { render: renderHistory, label: 'SYS://HISTORY' },
+    '/': { render: renderDashboard, label: 'Dashboard' },
+    '/scanner': { render: renderScanner, label: 'Scanner' },
+    '/generator': { render: renderGenerator, label: 'Documents' },
+    '/history': { render: renderHistory, label: 'History' },
 };
 
 function navigate() {
     if (!currentUser) {
         sidebar.style.display = 'none';
-        document.querySelector('.topbar')?.style.setProperty('display', 'none');
         container.style.padding = '0';
+        container.style.maxWidth = 'none';
         renderAuth(container, async () => {
             currentUser = await getUser();
             if (currentUser) initApp();
@@ -31,8 +30,8 @@ function navigate() {
     }
 
     sidebar.style.display = 'flex';
-    document.querySelector('.topbar')?.style.setProperty('display', 'flex');
     container.style.padding = '';
+    container.style.maxWidth = '';
 
     const hash = window.location.hash.replace('#', '') || '/';
     const route = routes[hash] || routes['/'];
@@ -43,32 +42,28 @@ function navigate() {
         link.classList.toggle('active', isActive);
     });
 
-    if (breadcrumb) breadcrumb.textContent = route.label;
-
     container.style.opacity = '0';
-    container.style.transform = 'translateY(6px)';
+    container.style.transform = 'translateY(4px)';
     setTimeout(() => {
         route.render(container, currentUser);
-        container.style.transition = 'opacity 0.25s ease, transform 0.25s ease';
+        container.style.transition = 'opacity 0.2s ease, transform 0.2s ease';
         container.style.opacity = '1';
         container.style.transform = 'translateY(0)';
-    }, 120);
+    }, 80);
 }
 
 function initApp() {
     sidebar.style.display = 'flex';
-
-    // Add user info and logout to sidebar footer
-    const footer = document.querySelector('.sidebar-footer');
+    const footer = document.getElementById('sidebar-footer');
     if (footer && currentUser) {
+        const name = currentUser.user_metadata?.full_name || currentUser.email?.split('@')[0] || 'User';
         footer.innerHTML = `
-      <div class="status-indicator">
-        <div class="status-dot connected"></div>
-        <span>AI: ONLINE</span>
-      </div>
-      <div style="margin-top:var(--sp-2);display:flex;align-items:center;justify-content:space-between;">
-        <span style="font-family:var(--font-mono);font-size:9px;color:var(--text-tertiary);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:140px;">${currentUser.email}</span>
-        <button id="btn-logout" style="background:none;border:none;color:var(--neon-red);font-family:var(--font-mono);font-size:9px;cursor:pointer;font-weight:700;">EXIT</button>
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:var(--sp-2);">
+        <div style="display:flex;align-items:center;gap:var(--sp-2);">
+          <div style="width:24px;height:24px;border-radius:50%;background:var(--bg-4);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:600;color:var(--text-2);">${name.charAt(0).toUpperCase()}</div>
+          <span style="font-size:var(--font-xs);color:var(--text-3);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:110px;">${name}</span>
+        </div>
+        <button id="btn-logout" style="background:none;border:none;color:var(--text-4);font-size:var(--font-xs);cursor:pointer;font-family:var(--font);padding:var(--sp-1);" title="Sign out">↗</button>
       </div>
     `;
         document.getElementById('btn-logout')?.addEventListener('click', async () => {
@@ -77,17 +72,7 @@ function initApp() {
             navigate();
         });
     }
-
     navigate();
-}
-
-// Clock
-function updateClock() {
-    const el = document.getElementById('topbar-clock');
-    if (el) {
-        const now = new Date();
-        el.textContent = now.toLocaleTimeString('en-US', { hour12: false }) + ' UTC+' + (-now.getTimezoneOffset() / 60);
-    }
 }
 
 // Toast
@@ -100,25 +85,21 @@ window.showToast = function (message, type = 'info') {
     }
     const t = document.createElement('div');
     t.className = `toast ${type}`;
-    t.textContent = `> ${message}`;
+    t.textContent = message;
     tc.appendChild(t);
     setTimeout(() => t.remove(), 5000);
 };
 
-// Init
-window.addEventListener('hashchange', navigate);
-
+// Auth state
 onAuthChange(async (user) => {
     currentUser = user;
     if (user) initApp();
     else navigate();
 });
 
+window.addEventListener('hashchange', navigate);
 (async () => {
     currentUser = await getUser();
     if (currentUser) initApp();
     else navigate();
 })();
-
-setInterval(updateClock, 1000);
-updateClock();
