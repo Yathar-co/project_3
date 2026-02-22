@@ -1,4 +1,5 @@
 import { renderDashboard } from './pages/dashboard.js';
+import { initChatbot } from './components/chatbot.js';
 import { renderScanner } from './pages/scanner.js';
 import { renderGenerator } from './pages/generator.js';
 import { renderHistory } from './pages/history.js';
@@ -60,6 +61,7 @@ function navigate() {
 
 function initApp() {
     sidebar.style.display = 'flex';
+    initChatbot();
     const footer = document.getElementById('sidebar-footer');
     if (footer && currentUser) {
         const name = currentUser.user_metadata?.full_name || currentUser.email?.split('@')[0] || 'User';
